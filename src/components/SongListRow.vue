@@ -1,5 +1,5 @@
 <template>
-    <div data-pw="song" class="relative grow h-full min-w-0 rounded-sm flex items-center whitespace-nowrap text-xs"
+    <div data-pw="song" class="relative grow h-full min-w-0 rounded-xs flex items-center whitespace-nowrap text-xs"
         :class="rowClass">
         <div v-if="!compact" class="basis-10 h-10 mr-3 shrink-0 flex items-center">
             <AlbumArt :url="artworkURL" />
@@ -71,7 +71,7 @@ const rowClass = computed(() => {
         background = isOdd ? "bg-ls-50 hover:bg-ls-100 dark:bg-ds-800/30 dark:hover:bg-ds-700/30" : "bg-ls-0 hover:bg-ls-100 dark:bg-ds-900/30 dark:hover:bg-ds-700/30";
     } else {
         background = [
-            "bg-gradient-to-r from-ls-0/0 dark:from-ds-900/0 to-[50px] hover:to-ls-100 dark:hover:to-ds-700/20",
+            "bg-linear-to-r from-ls-0/0 dark:from-ds-900/0 to-[50px] hover:to-ls-100 dark:hover:to-ds-700/20",
             isOdd ? "to-ls-50 dark:to-ds-800/20" : "to-ls-0 dark:to-ds-900/20",
         ];
     }

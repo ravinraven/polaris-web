@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col items-center justify-center bg-ls-50 dark:bg-ds-800">
-		<div class="w-[480px] bg-ls-0 dark:bg-ds-900 p-12 rounded-lg shadow">
+		<div class="w-[480px] bg-ls-0 dark:bg-ds-900 p-12 rounded-lg shadow-sm">
 			<img class="mx-auto h-16 mb-12" src="/assets/logo.svg" alt="Polaris" />
 			<form name="authForm" @submit.prevent="doLogin" class="space-y-6">
 				<InputText v-model="username" id="username" autocomplete="username" label="Username"

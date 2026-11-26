@@ -4,7 +4,7 @@
         text-ls-700 dark:text-ds-300
         ring-1 ring-inset
         ring-ls-200 dark:ring-white/10
-        hover:bg-ls-100 hover:dark:bg-ds-700
+        hover:bg-ls-100 dark:hover:bg-ds-700
         " :class="sizes[size]">
         <svg class="h-1.5 w-1.5" viewBox="0 0 6 6" :class="palette">
             <circle cx="3" cy="3" r="3" />

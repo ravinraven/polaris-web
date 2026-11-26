@@ -23,32 +23,32 @@ let palettes = {
     disabled: `
         bg-ls-400 text-ls-200
         dark:bg-ds-800 dark:text-ds-500
-        shadow-sm
+        shadow-xs
         `,
     primary: `
         bg-accent-600 hover:bg-accent-500 text-ls-0
         dark:bg-accent-600 dark:hover:bg-accent-500 dark:text-ds-0
-        focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600 
-        shadow-sm
+        focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-600 
+        shadow-xs
         `,
     secondary: `
         bg-ls-0 hover:bg-ls-50 text-ls-900
         dark:bg-ds-0/10 dark:hover:bg-ds-0/20 dark:text-ds-0
         ring-1 ring-inset ring-ls-300
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 
+        focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-600 
         dark:ring-0
-        shadow-sm
+        shadow-xs
     `,
     tertiary: `
         hover:bg-ls-100 text-ls-700
         dark:hover:bg-ds-0/20 dark:text-ds-200
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-600 
+        focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-600 
     `,
     danger: `
         bg-red-600 hover:bg-red-500 text-ls-0
         dark:bg-red-600 dark:hover:bg-red-500 dark:text-ds-0
-        focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 
-        shadow-sm
+        focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 
+        shadow-xs
         `,
 };
 
@@ -62,7 +62,7 @@ let sizes = {
 const buttonClass = computed(() => {
     const palette = props.disabled ? palettes.disabled : palettes[severity];
     return [
-        props.disabled ? "cursor-not-allowed" : "cursor-pointer [&>*]:active:translate-y-px",
+        props.disabled ? "cursor-not-allowed" : "cursor-pointer active:*:translate-y-px",
         sizes[size],
         palette,
     ];

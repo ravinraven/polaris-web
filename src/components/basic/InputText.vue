@@ -3,13 +3,13 @@
         <label v-if="label" :for="id" class="block text-sm font-medium leading-6 text-ls-900 dark:text-ds-0">
             {{ props.label }}
         </label>
-        <div :class="{ 'mt-2': label }" class="relative rounded-md shadow-sm">
+        <div :class="{ 'mt-2': label }" class="relative rounded-md shadow-xs">
             <div v-if="icon" class="pointer-events-none absolute inset-y-0 left-3 flex items-center">
                 <span class="material-icons-round text-ls-400" v-text="icon" />
             </div>
             <input ref="input" v-focus="autofocus" v-model="model" :id="id" :type="password ? 'password' : 'text'"
                 :placeholder="placeholder" :autocomplete="autocomplete" :autofocus="autofocus" :required="required"
-                :class="inputClass" class="w-full rounded-md border-0 py-2 pr-8 shadow-sm text-sm leading-6
+                :class="inputClass" class="w-full rounded-md border-0 py-2 pr-8 shadow-xs text-sm leading-6
                 ring-1 ring-inset focus:ring-2 focus:ring-inset 
                 dark:bg-white/5
                 text-ls-900 dark:text-ds-0

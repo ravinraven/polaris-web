@@ -54,7 +54,7 @@
 			<div class="flex flex-col gap-4 text-ls-900 dark:text-ds-200 text-sm">
 				<div class="text-2xl font-semibold leading-6 text-ls-700 dark:text-ds-200 mb-8">Search Syntax</div>
 
-				<SectionTitle class="!mb-0" label="Querying Any Field" icon="auto_awesome" />
+				<SectionTitle class="mb-0!" label="Querying Any Field" icon="auto_awesome" />
 
 				<p>Searching for <span class="font-medium text-accent-600 font-mono">sonata</span> will find any song
 					with "sonata" in its title, artist, file path, album name etc.</p>
@@ -66,7 +66,7 @@
 
 				<p>Search terms must be at least two character long. All searches are case insensitive.</p>
 
-				<SectionTitle class="mt-4 !mb-0" label="Querying Specific Fields" icon="rule" />
+				<SectionTitle class="mt-4 mb-0!" label="Querying Specific Fields" icon="rule" />
 				<p>Partial matches for text fields can be expressed with the % operator. For example, <span
 						class="font-medium text-accent-600 font-mono">composer % bac</span> would returns pieces with
 					J.S.
@@ -83,7 +83,7 @@
 					are also supported.
 				</p>
 
-				<SectionTitle class="mt-4 !mb-0" label="Combining Queries" icon="join_left" />
+				<SectionTitle class="mt-4 mb-0!" label="Combining Queries" icon="join_left" />
 				<p>Queries can be combined with ||, && and !! to express logical OR, AND and NOT operations. Parenthesis
 					can be used to alter precedence.</p>
 
@@ -105,7 +105,7 @@
 						class="font-medium text-accent-600 font-mono">sonata beethoven</span> will list pieces with
 					"sonata" appearing in any field and "beethoven" appearing in any field.</p>
 
-				<SectionTitle class="mt-4 !mb-0" label="Supported Fields" icon="checklist" />
+				<SectionTitle class="mt-4 mb-0!" label="Supported Fields" icon="checklist" />
 				<ul class="ml-8 list-disc">
 					<li><span class="font-medium text-accent-600 font-mono">album</span></li>
 					<li><span class="font-medium text-accent-600 font-mono">albumartist</span></li>

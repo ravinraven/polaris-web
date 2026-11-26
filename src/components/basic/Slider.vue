@@ -11,7 +11,7 @@
             </slot>
             <div data-pw="knob" class="cursor-grab
             absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5
-            rounded-full shadow-sm border-2
+            rounded-full shadow-xs border-2
             bg-ls-0 dark:bg-ds-900 
             border-ls-300 dark:border-ds-700
             group-active:border-accent-500 group-focus:border-accent-500

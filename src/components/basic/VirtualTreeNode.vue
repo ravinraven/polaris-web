@@ -1,6 +1,6 @@
 <template>
     <div data-pw="node" tabindex="0"
-        class="group flex items-center px-2 py-1 min-w-fit rounded-sm cursor-pointer hover:bg-ls-100 dark:hover:bg-ds-800"
+        class="group flex items-center px-2 py-1 min-w-fit rounded-xs cursor-pointer hover:bg-ls-100 dark:hover:bg-ds-800"
         :class="rootClass" :style="rootStyle">
         <button type="button" @mousedown.prevent @click.stop="toggle" data-pw="toggle" class="size-7 pt-1 shrink-0 "
             :class="{ invisible: node.leaf }" tabindex="-1">
@@ -37,7 +37,7 @@ function toggle() {
 
 const rootClass = computed(() => {
     return [
-        props.selected ? "!bg-accent-100 text-accent-700 dark:!bg-accent-900 dark:text-accent-200" : "text-ls-700 dark:text-ds-300 dark:hover:text-ds-200",
+        props.selected ? "bg-accent-100! text-accent-700 dark:bg-accent-900! dark:text-accent-200" : "text-ls-700 dark:text-ds-300 dark:hover:text-ds-200",
         props.focused ? "outline-1 -outline-offset-2 outline-dotted outline-accent-500" : "",
     ];
 });

@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { useRafFn, useTimeAgo } from "@vueuse/core";
+import { useIntervalFn, useRafFn, useTimeAgo } from "@vueuse/core";
 
 import { IndexStatus as Status } from "@/api/dto";
 import Button from "@/components/basic/Button.vue";
@@ -76,8 +76,8 @@ const title = computed(() => {
     }
 });
 
-const started = useTimeAgo(() => props.status.last_start_time || Date.now(), { showSecond: true, updateInterval: 0.5 });
-const end = useTimeAgo(() => props.status.last_end_time || Date.now(), { showSecond: false, updateInterval: 5 });
+const started = useTimeAgo(() => props.status.last_start_time || Date.now(), { showSecond: true, scheduler: (cb) => useIntervalFn(cb, 0.5) });
+const end = useTimeAgo(() => props.status.last_end_time || Date.now(), { showSecond: false, scheduler: (cb) => useIntervalFn(cb, 5) });
 const timing = computed(() => {
     switch (props.status.state) {
         case "OutOfDate": return "Scan is about to start";

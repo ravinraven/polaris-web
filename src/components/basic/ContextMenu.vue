@@ -7,7 +7,7 @@
 				border border-ls-200 dark:border-ds-700
 				shadow-lg shadow-accent-800/20 dark:shadow-accent-900/20">
 				<div v-for="item in items"
-					class="group cursor-pointer flex justify-between gap-8 px-3 py-1.5 rounded-sm hover:bg-accent-100 dark:hover:bg-accent-900"
+					class="group cursor-pointer flex justify-between gap-8 px-3 py-1.5 rounded-xs hover:bg-accent-100 dark:hover:bg-accent-900"
 					@click="execute(item)">
 					<div v-text="item.label"
 						class="font-medium text-ls-700 dark:text-ds-300 group-hover:text-accent-700 dark:group-hover:text-accent-200" />

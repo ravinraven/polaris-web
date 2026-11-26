@@ -1,6 +1,76 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+/* Layered so that Tailwind utilities (eg. text-5xl) override the icon font defaults. */
+@import 'material-icons/iconfont/round.css' layer(components);
+
+@plugin '@tailwindcss/forms';
+
+@custom-variant dark (&:where([data-polaris-theme-polarity="dark"], [data-polaris-theme-polarity="dark"] *));
+
+@theme {
+  --font-sans:
+    InterVariable, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --color-accent-0: rgb(var(--accent-0));
+  --color-accent-50: rgb(var(--accent-50));
+  --color-accent-100: rgb(var(--accent-100));
+  --color-accent-200: rgb(var(--accent-200));
+  --color-accent-300: rgb(var(--accent-300));
+  --color-accent-400: rgb(var(--accent-400));
+  --color-accent-500: rgb(var(--accent-500));
+  --color-accent-600: rgb(var(--accent-600));
+  --color-accent-700: rgb(var(--accent-700));
+  --color-accent-800: rgb(var(--accent-800));
+  --color-accent-900: rgb(var(--accent-900));
+  --color-accent-950: rgb(var(--accent-950));
+
+  --color-ls-0: rgb(var(--surface-0));
+  --color-ls-50: rgb(var(--surface-50));
+  --color-ls-100: rgb(var(--surface-100));
+  --color-ls-200: rgb(var(--surface-200));
+  --color-ls-300: rgb(var(--surface-300));
+  --color-ls-400: rgb(var(--surface-400));
+  --color-ls-500: rgb(var(--surface-500));
+  --color-ls-600: rgb(var(--surface-600));
+  --color-ls-700: rgb(var(--surface-700));
+  --color-ls-800: rgb(var(--surface-800));
+  --color-ls-900: rgb(var(--surface-900));
+  --color-ls-950: rgb(var(--surface-950));
+
+  --color-ds-0: rgb(var(--surface-0));
+  --color-ds-50: rgb(var(--surface-50));
+  --color-ds-100: rgb(var(--surface-100));
+  --color-ds-200: rgb(var(--surface-200));
+  --color-ds-300: rgb(var(--surface-300));
+  --color-ds-400: rgb(var(--surface-400));
+  --color-ds-500: rgb(var(--surface-500));
+  --color-ds-600: rgb(var(--surface-600));
+  --color-ds-700: rgb(var(--surface-700));
+  --color-ds-800: rgb(var(--surface-800));
+  --color-ds-900: rgb(var(--surface-900));
+  --color-ds-950: rgb(var(--surface-950));
+
+  --breakpoint-lg: 60rem;
+  --breakpoint-3xl: 120rem;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 @font-face {
     font-family: InterVariable;

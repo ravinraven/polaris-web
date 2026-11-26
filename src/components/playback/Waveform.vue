@@ -100,7 +100,7 @@ function redraw() {
     }
 }
 
-function draw(canvas: HTMLCanvasElement, color: string) {
+function draw(canvas: HTMLCanvasElement, color: string | undefined) {
     const w = width.value;
     const h = height.value;
 
@@ -112,7 +112,7 @@ function draw(canvas: HTMLCanvasElement, color: string) {
     canvas.width = w;
     canvas.height = h;
     context.clearRect(0, 0, w, h);
-    context.fillStyle = `rgb(${color})`;
+    context.fillStyle = `rgb(${color ?? ""})`;
 
     if (loading.value || !peaks.value) {
         context.fillRect(0, h / 2 - 2, w, 4);
