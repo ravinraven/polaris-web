@@ -54,3 +54,20 @@ test("can drag and drop album art to playlist", async ({ page }) => {
     await page.getByTestId('album-art').dragTo(page.getByTestId('playlist-songs'), { force: true });
     await expect(page.getByTestId('playlist-song')).toHaveCount(5);
 });
+
+test("lists albums and plays songs through the OpenSubsonic API", async ({ page }) => {
+    const urls: string[] = [];
+    page.on("request", request => urls.push(new URL(request.url()).pathname));
+
+    await page.reload();
+    await page.getByTestId('sidebar').getByTestId('albums').click();
+    await expect(page.getByTestId('album')).toHaveCount(3);
+    await page.getByTestId('album').filter({ hasText: "Hunted" }).getByTestId('album-art').click({ force: true });
+    await page.getByText('Three Gates').click({ clickCount: 2 });
+    await expect(page.getByTestId('playlist-song').getByText('Three Gates')).toBeVisible();
+
+    // The album list, the album and the audio come from /rest, even though the API is off for apps
+    await expect.poll(() => urls.some(u => u.endsWith("/rest/getAlbumList2"))).toBe(true);
+    await expect.poll(() => urls.some(u => u.endsWith("/rest/getAlbum"))).toBe(true);
+    await expect.poll(() => urls.some(u => u.endsWith("/rest/stream"))).toBe(true);
+});
