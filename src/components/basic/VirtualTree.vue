@@ -1,7 +1,7 @@
 <template>
     <div class="relative min-h-0">
         <div :list="visibleNodes" v-bind="containerProps" @keydown="onKeyDown" class="h-full">
-            <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-none">
+            <div v-bind="wrapperProps" ref="virtualList" tabindex="-1" class="outline-hidden">
                 <VirtualTreeNode v-for="node in virtualNodes" :style="`height: ${itemHeight}px`" :node="node.data"
                     tabindex="-1" @node-toggle="toggleNode" @click="clickNode($event, node.data)"
                     @contextmenu="onNodeRightClick($event, node.data)" @dblclick="onNodeDoubleClick($event, node.data)"
@@ -14,9 +14,9 @@
         <div v-if="findQuery.length" class="absolute right-0 bottom-0" v-on-click-outside="clearFindQuery">
             <div class="relative text-ls-900 dark:text-ds-400">
                 <label
-                    class="absolute -top-2 left-2 rounded-sm bg-ls-50 dark:bg-ds-900 px-1 text-xs font-medium">Find</label>
+                    class="absolute -top-2 left-2 rounded-xs bg-ls-50 dark:bg-ds-900 px-1 text-xs font-medium">Find</label>
                 <input disabled type="text" :value="findQuery"
-                    class="rounded-md dark:bg-ds-900 border-0 py-2 shadow-sm ring-2 ring-inset ring-accent-600"
+                    class="rounded-md dark:bg-ds-900 border-0 py-2 shadow-xs ring-2 ring-inset ring-accent-600"
                     :class="findQuery.length && !findMatch ? 'ring-red-600 text-red-900 dark:text-red-400' : ''" />
             </div>
         </div>

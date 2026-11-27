@@ -68,6 +68,9 @@ const albums: ShallowRef<AlbumHeader[]> = ref([]);
 const fetchedAll = ref(false);
 const seed = ref(generateSeed());
 
+// Declared (with an explicit type) before its first use to avoid a circular type inference.
+const grid = useTemplateRef<InstanceType<typeof AlbumGrid>>("grid");
+
 const { state: fetchedAlbums, isLoading, isReady, error, execute: fetchAlbums } = useAsyncState(async () => {
     const numColumns = grid.value?.numColumns ?? 5;
     const fetchCount = numColumns * 20;
@@ -81,7 +84,6 @@ const { state: fetchedAlbums, isLoading, isReady, error, execute: fetchAlbums } 
     }
 }, [], { immediate: false });
 
-const grid = useTemplateRef("grid");
 const viewport = computed(() => grid.value?.$el);
 const { y: scrollY } = useScroll(viewport);
 const { height: viewportHeight } = useElementSize(grid);

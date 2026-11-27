@@ -130,8 +130,8 @@ const surface400 = useCssVar(() => lightMode.value ? "--surface-400" : "--surfac
 const surface500 = useCssVar("--surface-500");
 const surface700 = useCssVar(() => lightMode.value ? "--surface-700" : "--surface-300");
 
-function toHex(color: string) {
-    return formatHex(rgb(`rgb(${color})`));
+function toHex(color: string | undefined) {
+    return formatHex(rgb(`rgb(${color ?? ""})`));
 }
 
 const genreChartOptions = computed(() => ({

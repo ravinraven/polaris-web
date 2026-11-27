@@ -35,8 +35,8 @@
                 </div>
                 <div class="divide-y
                     divide-ls-100 dark:divide-ds-700
-                    even:*:bg-ls-0 odd:*:bg-ls-50
-                    dark:even:*:bg-ds-700/30 dark:odd:*:bg-ds-800/30
+                    *:even:bg-ls-0 *:odd:bg-ls-50
+                    dark:*:even:bg-ds-700/30 dark:*:odd:bg-ds-800/30
                     ">
                     <SongField v-if="song.artists?.length" label="Artists"
                         :values="song.artists.map(v => ({ text: v, link: tryMakeArtistURL(v) }))" />

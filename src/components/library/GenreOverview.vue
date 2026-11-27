@@ -18,7 +18,7 @@
                                 cursor-pointer
                                 flex items-center gap-4 px-3 p-4
                                 rounded-md border border-ls-200 dark:border-ds-700
-                                hover:bg-ls-100 hover:dark:bg-ds-700
+                                hover:bg-ls-100 dark:hover:bg-ds-700
                                 " @click="onArtistClicked(artist.name)">
                             <span class="material-icons-round rounded-full p-2
                                     flex items-center justify-center

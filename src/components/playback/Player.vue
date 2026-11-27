@@ -5,7 +5,7 @@
 			@ended="onEnded" @pause="onPaused" @playing="onPlaying" @waiting="onWaiting" />
 		<PlayerAlbum :mini-player="isMiniPlayer" class="lg:basis-80 min-w-0 min-h-0 lg:grow shrink" />
 		<PlayerSong :mini-player="isMiniPlayer" :seconds-played="secondsPlayed" :duration="duration"
-			:progress="trackProgress" @seek="seekTo" class="lg:grow-[8] lg:basis-80 min-w-32 lg:mx-8 xl:mx-16" />
+			:progress="trackProgress" @seek="seekTo" class="lg:grow-8 lg:basis-80 min-w-32 lg:mx-8 xl:mx-16" />
 		<PlayerControls class="lg:basis-80 lg:min-w-0 lg:grow lg:shrink" v-model:volume="volume" :paused="paused"
 			:buffering="buffering" :error="error" @play="play" @pause="pause" @previous="skipPrevious"
 			@next="skipNext" />

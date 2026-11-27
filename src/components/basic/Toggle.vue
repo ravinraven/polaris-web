@@ -1,15 +1,15 @@
 <template>
     <SwitchGroup as="div" class="flex items-center"
         :class="[disabled ? 'cursor-not-allowed opacity-75 saturate-0' : '']">
-        <Switch v-model="value" class="relative inline-flex h-6 w-11 flex-shrink-0
+        <Switch v-model="value" class="relative inline-flex h-6 w-11 shrink-0
             rounded-full border-2 border-transparent
             transition-colors duration-200 ease-in-out
-            focus:outline-none focus:ring-2 focus:ring-accent-600 focus:ring-offset-2" :class="[
+            focus:outline-hidden focus:ring-2 focus:ring-accent-600 focus:ring-offset-2" :class="[
                 value ? 'bg-accent-600 dark:bg-accent-700' : 'bg-ls-200 dark:bg-ds-700',
                 disabled ? 'cursor-not-allowed' : 'cursor-pointer',
             ]">
             <span
-                :class="[value ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-ls-0 dark:bg-ds-0 shadow ring-0 transition duration-200 ease-in-out']">
+                :class="[value ? 'translate-x-5' : 'translate-x-0', 'pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-ls-0 dark:bg-ds-0 shadow-sm ring-0 transition duration-200 ease-in-out']">
                 <span
                     :class="[value ? 'opacity-0 duration-100 ease-out' : 'opacity-100 duration-200 ease-in', 'absolute inset-0 flex h-full w-full items-center justify-center transition-opacity']"
                     aria-hidden="true">

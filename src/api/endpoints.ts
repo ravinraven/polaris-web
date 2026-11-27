@@ -3,15 +3,18 @@ import {
 	AlbumHeader,
 	AlbumKey,
 	API_ARRAY_SEPARATOR,
+	ApiKey,
 	Artist,
 	ArtistHeader,
 	Authorization,
 	BrowserEntry,
+	CreatedApiKey,
 	Genre,
 	GenreHeader,
 	IndexStatus,
 	InitialSetup,
 	MountDir,
+	NewApiKey,
 	NewSettings,
 	NewUser,
 	Peaks,
@@ -129,6 +132,25 @@ export async function updateUser(name: string, userUpdate: UserUpdate): Promise<
 
 export async function deleteUser(name: string) {
 	await request("/user/" + name, { method: "DELETE" });
+}
+
+// API keys
+
+export async function getApiKeys(): Promise<ApiKey[]> {
+	return (await request("/api_keys")).json();
+}
+
+export async function createApiKey(newApiKey: NewApiKey): Promise<CreatedApiKey> {
+	const response = await request("/api_keys", {
+		method: "POST",
+		body: JSON.stringify(newApiKey),
+		headers: { "Content-Type": "application/json" },
+	});
+	return response.json();
+}
+
+export async function deleteApiKey(id: string): Promise<void> {
+	await request("/api_keys/" + encodeURIComponent(id), { method: "DELETE" });
 }
 
 // File browser

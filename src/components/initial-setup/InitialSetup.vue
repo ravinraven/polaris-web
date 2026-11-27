@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col items-center justify-center bg-ls-50 dark:bg-ds-800">
-		<div class="w-[800px] bg-ls-0 dark:bg-ds-900 p-12 pl-0 flex justify-between items-center rounded-lg shadow">
+		<div class="w-[800px] bg-ls-0 dark:bg-ds-900 p-12 pl-0 flex justify-between items-center rounded-lg shadow-sm">
 			<div class="basis-64 shrink-0 flex items-center justify-center">
 				<img class="w-28 h-28" src="/assets/logo_no_text.svg" />
 			</div>

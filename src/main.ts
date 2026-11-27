@@ -6,7 +6,6 @@ import EntryPoint from "@/components/EntryPoint.vue";
 import { usePreferencesStore } from "@/stores/preferences";
 import router from "./router";
 
-import "material-icons/iconfont/round.css";
 import "./style.css";
 
 createApp(EntryPoint)
