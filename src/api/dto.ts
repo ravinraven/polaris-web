@@ -20,6 +20,24 @@ export type User = {
 	is_admin: boolean;
 };
 
+export type ApiKey = {
+	id: string;
+	label: string;
+	/** Seconds since the Unix epoch. */
+	created_at: number;
+	/** Seconds since the Unix epoch. */
+	last_used_at?: number | null;
+};
+
+export type NewApiKey = {
+	label: string;
+};
+
+export type CreatedApiKey = ApiKey & {
+	/** The secret key. Only returned when the key is created. */
+	key: string;
+};
+
 export type NewUser = {
 	name: string;
 	password: string;

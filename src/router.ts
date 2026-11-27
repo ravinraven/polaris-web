@@ -20,6 +20,7 @@ import Search from "@/components/library/Search.vue";
 import SongDetails from "@/components/library/SongDetails.vue";
 import InitialSetup from "@/components/initial-setup/InitialSetup.vue";
 import Settings from "@/components/settings/Settings.vue";
+import SettingsApiKeys from "@/components/settings/ApiKeys.vue";
 import SettingsCollection from "@/components/settings/Collection.vue";
 import SettingsDDNS from "@/components/settings/DDNS.vue";
 import SettingsPreferences from "@/components/settings/Preferences.vue";
@@ -91,6 +92,7 @@ const routes = [
 				path: "/settings",
 				component: Settings,
 				children: [
+					{ path: "api-keys", component: SettingsApiKeys },
 					{ path: "collection", component: SettingsCollection },
 					{ path: "ddns", component: SettingsDDNS },
 					{ path: "users", component: SettingsUsers },

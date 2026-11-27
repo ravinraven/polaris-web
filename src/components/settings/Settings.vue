@@ -16,7 +16,7 @@ import PageHeader from '@/components/basic/PageHeader.vue';
 import Tabs, { TabItem } from '@/components/basic/Tabs.vue';
 import { useUserStore } from '@/stores/user';
 
-type Category = "preferences" | "collection" | "users" | "ddns";
+type Category = "preferences" | "api-keys" | "collection" | "users" | "ddns";
 
 const router = useRouter();
 const user = useUserStore();
@@ -24,6 +24,7 @@ const user = useUserStore();
 const tabs = computed(() => {
 	let items: TabItem<Category>[] = [];
 	items.push({ label: "Preferences", value: "preferences", testID: "preferences" });
+	items.push({ label: "API Keys", value: "api-keys", testID: "api-keys" });
 	if (user.isAdmin) {
 		items.push({ label: "Collection", value: "collection", testID: "collection" });
 		items.push({ label: "Users", value: "users", testID: "users" });
@@ -35,7 +36,9 @@ const tabs = computed(() => {
 const category: ComputedRef<Category> = computed({
 	get: () => {
 		const path = router.currentRoute.value.path;
-		if (path.endsWith("/collection")) {
+		if (path.endsWith("/api-keys")) {
+			return "api-keys"
+		} else if (path.endsWith("/collection")) {
 			return "collection"
 		} else if (path.endsWith("/users")) {
 			return "users"
@@ -49,6 +52,9 @@ const category: ComputedRef<Category> = computed({
 		switch (value) {
 			case "preferences":
 				router.push("/settings/preferences");
+				break;
+			case "api-keys":
+				router.push("/settings/api-keys");
 				break;
 			case "collection":
 				router.push("/settings/collection");
