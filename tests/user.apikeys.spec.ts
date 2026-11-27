@@ -81,3 +81,26 @@ test("can revoke a key, after confirming", async ({ page }) => {
     await page.reload();
     await expect(keyRow(page, label)).toHaveCount(0);
 });
+
+test("an administrator can turn the OpenSubsonic API on and off", async ({ page }) => {
+    const toggle = page.getByTestId('opensubsonic-toggle').getByRole('switch');
+    await expect(toggle).toBeVisible();
+    await expect(toggle).toHaveAttribute('aria-checked', 'false');
+
+    const request = page.waitForRequest(request => request.method() == "PUT" && request.url().endsWith('/api/settings'));
+    await toggle.click();
+    expect((await request).postDataJSON()).toEqual({ opensubsonic_enabled: true });
+    await expect(toggle).toHaveAttribute('aria-checked', 'true');
+
+    // It stays on after a reload, and the API answers
+    await page.reload();
+    await expect(page.getByTestId('opensubsonic-toggle').getByRole('switch')).toHaveAttribute('aria-checked', 'true');
+    const response = await page.request.get('/rest/getOpenSubsonicExtensions?f=json');
+    expect(response.status()).toBe(200);
+
+    await page.getByTestId('opensubsonic-toggle').getByRole('switch').click();
+    await expect(page.getByTestId('opensubsonic-toggle').getByRole('switch')).toHaveAttribute('aria-checked', 'false');
+    await page.reload();
+    await expect(page.getByTestId('opensubsonic-toggle').getByRole('switch')).toHaveAttribute('aria-checked', 'false');
+    expect((await page.request.get('/rest/getOpenSubsonicExtensions?f=json')).status()).toBe(404);
+});
