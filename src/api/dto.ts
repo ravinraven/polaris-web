@@ -52,11 +52,13 @@ export type UserUpdate = {
 export type Settings = {
 	album_art_pattern: string;
 	ddns_update_url: string;
+	opensubsonic_enabled: boolean;
 };
 
 export type NewSettings = {
 	album_art_pattern?: string;
 	ddns_update_url?: string;
+	opensubsonic_enabled?: boolean;
 };
 
 export type IndexStatus = {

@@ -2,6 +2,21 @@
 	<div class="flex flex-col min-h-0" data-pw="api-keys-page">
 		<div class="flex flex-col gap-8 grow overflow-y-auto -mx-4 px-4">
 
+			<Section v-if="user.isAdmin" class="flex flex-col gap-4" data-pw="opensubsonic">
+				<SectionTitle label="OpenSubsonic API" />
+				<div class="max-w-3xl text-sm text-ls-600 dark:text-ds-300">
+					Lets apps that support the OpenSubsonic API connect to this server, at <code
+						class="font-mono">/rest</code>. It is off until you turn it on. API keys and passwords of
+					users on this server are used to sign in.
+				</div>
+				<Toggle v-model="openSubsonicToggle" label="Enable the OpenSubsonic API" data-pw="opensubsonic-toggle"
+					:disabled="openSubsonicEnabled === undefined || savingOpenSubsonic" />
+				<div v-if="openSubsonicError" class="text-sm text-red-600 dark:text-red-300"
+					data-pw="opensubsonic-error">
+					Could not save the setting. Try again.
+				</div>
+			</Section>
+
 			<p class="max-w-3xl text-sm text-ls-600 dark:text-ds-300">
 				API keys let other apps that support the OpenSubsonic API sign in as you without knowing your
 				password. A key is shown only once, when you create it. If you lose it, revoke it and create a new one.
@@ -81,20 +96,58 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, Ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, Ref, watch } from "vue";
 
 import { CreatedApiKey } from "@/api/dto";
 import Button from "@/components/basic/Button.vue";
 import InputText from "@/components/basic/InputText.vue";
 import Section from "@/components/basic/Section.vue";
+import SectionTitle from "@/components/basic/SectionTitle.vue";
+import Toggle from "@/components/basic/Toggle.vue";
+import { getSettings, putSettings } from "@/api/endpoints";
 import { useApiKeysStore } from "@/stores/apiKeys";
+import { useUserStore } from "@/stores/user";
 
 const MAX_LABEL_LENGTH = 100;
 
 const apiKeys = useApiKeysStore();
+const user = useUserStore();
 
-onMounted(() => {
+// Administrators can turn the API on and off. Unknown (undefined) until the setting is loaded.
+const openSubsonicEnabled: Ref<boolean | undefined> = ref(undefined);
+const openSubsonicToggle = computed({
+	get: () => openSubsonicEnabled.value ?? false,
+	set: (value: boolean) => { openSubsonicEnabled.value = value; },
+});
+const savingOpenSubsonic = ref(false);
+const openSubsonicError = ref(false);
+
+onMounted(async () => {
 	apiKeys.refresh();
+	if (user.isAdmin) {
+		try {
+			openSubsonicEnabled.value = (await getSettings()).opensubsonic_enabled;
+		} catch {
+			openSubsonicError.value = true;
+		}
+	}
+});
+
+watch(openSubsonicEnabled, async (enabled, previous) => {
+	// Changes from undefined are the setting being loaded, not the user's doing
+	if (enabled === undefined || previous === undefined) {
+		return;
+	}
+	savingOpenSubsonic.value = true;
+	openSubsonicError.value = false;
+	try {
+		await putSettings({ opensubsonic_enabled: enabled });
+	} catch {
+		openSubsonicError.value = true;
+		openSubsonicEnabled.value = previous;
+	} finally {
+		savingOpenSubsonic.value = false;
+	}
 });
 
 // The secret lives only in this component, so leaving the page discards it.

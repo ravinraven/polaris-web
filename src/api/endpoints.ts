@@ -59,6 +59,109 @@ function getAuthToken(): string | undefined {
 	return useUserStore().authToken;
 }
 
+// OpenSubsonic (`/rest`)
+//
+// Polaris's OpenSubsonic API does the browsing of albums and the serving of audio and cover art.
+// It identifies everything by opaque ids, while the rest of this app knows songs by path and
+// albums by name and artists. These maps remember which id goes with which, from every response
+// that carried both. Anything not (yet) seen falls back to the Polaris API.
+
+const REST_VERSION = "1.16.1";
+const REST_PAGE_SIZE = 500;
+const REST_ID = /^(so|al|ar|pl|di)_[A-Za-z0-9_-]{21}$/;
+const songIds = new Map<string, string>();
+const albumIds = new Map<string, string>();
+
+function albumIdKey(key: AlbumKey): string {
+	return (key.name || "") + API_ARRAY_SEPARATOR + key.artists.join(API_ARRAY_SEPARATOR);
+}
+
+function restURL(method: string, params: Record<string, string | number | undefined> = {}): string {
+	const query = new URLSearchParams({ v: REST_VERSION, c: "polaris-web", f: "json" });
+	for (const [name, value] of Object.entries(params)) {
+		if (value !== undefined) {
+			query.set(name, String(value));
+		}
+	}
+	// A session token is what this app has; the server accepts it on /rest as well
+	query.set("auth_token", getAuthToken() ?? "");
+	return `rest/${method}?${query}`;
+}
+
+type RestObject = Record<string, any>;
+
+async function rest(method: string, params: Record<string, string | number | undefined> = {}): Promise<RestObject> {
+	const response = await fetch(restURL(method, params));
+	if (!response.ok) {
+		throw response;
+	}
+	const body = (await response.json())["subsonic-response"];
+	if (body.status !== "ok") {
+		// 40 is the error for unknown credentials: the session is no longer valid
+		if (body.error?.code === 40) {
+			useUserStore().logout();
+		}
+		throw new Error(body.error?.message ?? "OpenSubsonic request failed");
+	}
+	return body;
+}
+
+function restArtists(item: RestObject): string[] {
+	const names: string[] | undefined = item.artists?.map((a: RestObject) => a.name);
+	return names?.length ? names : item.artist ? [item.artist] : [];
+}
+
+function restSong(child: RestObject): Song {
+	songIds.set(child.path, child.id);
+	return {
+		path: child.path,
+		track_number: child.track,
+		disc_number: child.discNumber,
+		title: child.title,
+		artists: restArtists(child),
+		album_artists: child.albumArtists?.map((a: RestObject) => a.name),
+		year: child.year,
+		album: child.album,
+		artwork: child.coverArt,
+		duration: child.duration,
+		genres: child.genres?.map((g: RestObject) => g.name),
+		composers: child.contributors?.filter((c: RestObject) => c.role === "composer").map((c: RestObject) => c.artist.name),
+		lyricists: child.contributors?.filter((c: RestObject) => c.role === "lyricist").map((c: RestObject) => c.artist.name),
+	};
+}
+
+function restAlbumHeader(album: RestObject): AlbumHeader {
+	const header: AlbumHeader = {
+		name: album.name,
+		main_artists: restArtists(album),
+		artwork: album.coverArt,
+		year: album.year,
+	};
+	albumIds.set(albumIdKey({ name: header.name, artists: header.main_artists }), album.id);
+	return header;
+}
+
+// The id of an album, looking it up when the list it came from has not been seen in this session
+// (the app remembers album lists between visits).
+async function resolveAlbumId(key: AlbumKey): Promise<string | undefined> {
+	const known = albumIds.get(albumIdKey(key));
+	if (known || !key.name) {
+		return known;
+	}
+	try {
+		const body = await rest("search3", { query: key.name, albumCount: 50, artistCount: 0, songCount: 0 });
+		(body.searchResult3?.album ?? []).forEach(restAlbumHeader);
+	} catch {
+		return undefined;
+	}
+	return albumIds.get(albumIdKey(key));
+}
+
+async function restAlbumList(type: string, offset: number, size: number): Promise<AlbumHeader[]> {
+	const body = await rest("getAlbumList2", { type, offset, size });
+	return (body.albumList2?.album ?? []).map(restAlbumHeader);
+}
+
 // Basic
 
 export async function initialSetup(): Promise<InitialSetup> {
@@ -211,8 +314,14 @@ export async function getGenreSongs(genre: string): Promise<SongList> {
 }
 
 export async function getAlbums(): Promise<AlbumHeader[]> {
-	const response = await request("/albums");
-	return await response.json();
+	const albums: AlbumHeader[] = [];
+	for (;;) {
+		const page = await restAlbumList("alphabeticalByName", albums.length, REST_PAGE_SIZE);
+		albums.push(...page);
+		if (page.length < REST_PAGE_SIZE) {
+			return albums;
+		}
+	}
 }
 
 export async function getRandomAlbums(seed: number, offset: number, count: number): Promise<AlbumHeader[]> {
@@ -221,8 +330,7 @@ export async function getRandomAlbums(seed: number, offset: number, count: numbe
 }
 
 export async function getRecentAlbums(offset: number, count: number): Promise<AlbumHeader[]> {
-	const response = await request(`/albums/recent?offset=${offset}&count=${count}`);
-	return await response.json();
+	return await restAlbumList("newest", offset, Math.min(count, REST_PAGE_SIZE));
 }
 
 export async function getArtists(): Promise<ArtistHeader[]> {
@@ -237,6 +345,14 @@ export async function getArtist(name: string): Promise<Artist> {
 
 export async function getAlbum(albumKey: AlbumKey): Promise<Album> {
 	const songs = useSongsStore();
+	const id = await resolveAlbumId(albumKey);
+	if (id) {
+		const album = (await rest("getAlbum", { id })).album;
+		const header = restAlbumHeader(album);
+		const result: Album = { ...header, songs: (album.song ?? []).map(restSong) };
+		songs.ingest(result.songs);
+		return result;
+	}
 	const response = await request("/album/" + encodeURIComponent(albumKey.name || "") + "/by/" + encodeURIComponent(albumKey.artists.join(API_ARRAY_SEPARATOR)));
 	return await response.json().then((album: Album) => {
 		songs.ingest(album.songs);
@@ -327,10 +443,20 @@ export async function get_peaks(path: string): Promise<Peaks> {
 }
 
 export function makeAudioURL(path: string) {
+	const id = songIds.get(path);
+	if (id) {
+		return restURL("stream", { id });
+	}
 	return "api/audio/" + encodeURIComponent(path) + "?auth_token=" + getAuthToken();
 }
 
+const THUMBNAIL_PIXELS = { tiny: 64, small: 400, large: 1200, native: undefined };
+
 export function makeThumbnailURL(path: string, size: "tiny" | "small" | "large" | "native") {
 	size = size || "small";
+	// Artwork from the OpenSubsonic API is a cover art id, from the Polaris API a path
+	if (REST_ID.test(path)) {
+		return restURL("getCoverArt", { id: path, size: THUMBNAIL_PIXELS[size] });
+	}
 	return `api/thumbnail/${encodeURIComponent(path)}?size=${size}&pad=false&auth_token=${getAuthToken()}`;
 }
