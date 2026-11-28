@@ -2,7 +2,7 @@
 	<div class="flex flex-col">
 		<PageHeader title="Files" caption="Browse music as a hierarchy of files and folders." />
 
-		<InputText class="mb-8" v-model="filterQuery" id="filter" placeholder="Filter" icon="filter_alt" autofocus
+		<InputText class="mb-8" v-model="filterQuery" id="filter" placeholder="Filter by name, .ext or dir:folder" icon="filter_alt" autofocus
 			clearable />
 
 		<div v-show="treeModel.length" class="grow min-h-0 flex flex-col">
@@ -71,6 +71,7 @@ import VirtualTree from "@/components/basic/VirtualTree.vue";
 import { Node } from "@/components/basic/VirtualTree.vue";
 import { DndPayloadFiles, useDragAndDrop } from '@/dnd';
 import { getPathTail } from '@/format';
+import { parseFilter } from "@/filter";
 import { useHistory } from "@/history";
 import { makeSongURL } from "@/router";
 import { usePlaybackStore } from "@/stores/playback";
@@ -92,6 +93,7 @@ watch(topLevel, (v) => {
 });
 
 const filterQuery = ref("");
+
 const showFiltered = computed(() => filterQuery.value.length);
 
 const { state: filterResults, isLoading: filtering, error: filterError, execute: fetchFiltered } = useAsyncState(
@@ -99,7 +101,12 @@ const { state: filterResults, isLoading: filtering, error: filterError, execute:
 		if (filterQuery.value.length < 2) {
 			return Promise.resolve(undefined);
 		}
-		let paths = (await search(`path % "${filterQuery.value}"`)).paths;
+		const filter = parseFilter(filterQuery.value);
+		if (!filter.searchText) {
+			return Promise.resolve([]);
+		}
+		let paths = (await search(`path % "${filter.searchText.replace(/"/g, "")}"`)).paths;
+		paths = paths.filter(filter.matches);
 		paths.sort();
 		return paths;
 	},
@@ -110,7 +117,7 @@ watch(filterQuery, (to, from) => {
 	if (!filterResults.value || !to.startsWith(from)) {
 		filterTreeModel.value = [];
 	}
-	if (filterQuery.value.length > 2) {
+	if (filterQuery.value.length > 2 || /^\s*(ext:|dir:|\.)/.test(filterQuery.value)) {
 		fetchFiltered();
 	}
 });
@@ -156,9 +163,11 @@ async function openDirectory(node: Node) {
 		treeModel.value[parentIndex].loading = true;
 	}
 
-	let children;
+	let children: Node[] | undefined;
+	let opened: string[] = [];
 	try {
-		children = await browse(node.key || "").then(f => makeTreeNodes(f, node));
+		const firstLevel = await browse(node.key || "").then(f => makeTreeNodes(f, node));
+		({ nodes: children, opened } = await openThroughEmptyLevels(firstLevel));
 	} catch (e) { }
 
 	{
@@ -170,6 +179,25 @@ async function openDirectory(node: Node) {
 		newModel[parentIndex] = { ...newModel[parentIndex], loading: false };
 		treeModel.value = newModel;
 	}
+	tree.value?.expand(opened);
+}
+
+// A folder with no files and a single subfolder is not worth stopping at: that subfolder is opened
+// too, and so on until a level that has files, or several folders to choose from.
+const MAX_AUTO_OPEN_DEPTH = 12;
+
+async function openThroughEmptyLevels(level: Node[]): Promise<{ nodes: Node[], opened: string[] }> {
+	const nodes = [...level];
+	const opened: string[] = [];
+	let last = level;
+	for (let i = 0; i < MAX_AUTO_OPEN_DEPTH && last.length == 1 && !last[0].leaf; i++) {
+		const folder = last[0];
+		const next = await browse(folder.key).then(f => makeTreeNodes(f, folder));
+		opened.push(folder.key);
+		nodes.push(...next);
+		last = next;
+	}
+	return { nodes, opened };
 }
 
 function makeTreeNodes(entries: BrowserEntry[], parent?: Node): Node[] {

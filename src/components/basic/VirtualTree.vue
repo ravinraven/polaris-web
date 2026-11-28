@@ -94,7 +94,14 @@ const { clickItem: clickNode, focusedKey, multiselect, pivotKey, selectedKeys, s
     { onMove: snapScrolling },
 );
 
-defineExpose({ selection });
+// Shows the children of nodes that were put in the tree already open
+function expand(keys: string[]) {
+    for (const key of keys) {
+        expandedKeys.value.add(key);
+    }
+}
+
+defineExpose({ selection, expand });
 
 const overscan = 1;
 const { list: virtualNodes, containerProps, wrapperProps, scrollTo } = useVirtualList(visibleNodes, { itemHeight: itemHeight.value, overscan });
